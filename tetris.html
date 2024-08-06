@@ -47,3 +47,54 @@
         font-size: 14px;
     }
 </style>
+</head>
+<body>
+<div id="game-container">
+    <canvas id="tetris-board" width="300" height="600"></canvas>
+    <div id="side-panel">
+        <div id="score">Score: <span id="score-value">0</span></div>
+        <div id="level">Level: <span id="level-value">1</span></div>
+        <canvas id="next-piece" width="120" height="120"></canvas>
+        <button id="restart-btn">Restart Game</button>
+        <div id="instructions">
+            <h3>How to Play:</h3>
+            <p>← → : Move left/right<br>
+            ↓ : Move down faster<br>
+            ↑ : Rotate piece<br>
+            Space : Drop piece</p>
+        </div>
+    </div>
+</div>
+
+<script>
+const canvas = document.getElementById('tetris-board');
+const ctx = canvas.getContext('2d');
+const nextPieceCanvas = document.getElementById('next-piece');
+const nextPieceCtx = nextPieceCanvas.getContext('2d');
+const scoreElement = document.getElementById('score-value');
+const levelElement = document.getElementById('level-value');
+const restartBtn = document.getElementById('restart-btn');
+
+const ROWS = 20;
+const COLS = 10;
+const BLOCK_SIZE = 30;
+const NEXT_BLOCK_SIZE = 20;
+let score = 0;
+let level = 1;
+let gameInterval;
+
+const SHAPES = [
+    [[1, 1, 1, 1]],
+    [[1, 1], [1, 1]],
+    [[1, 1, 1], [0, 1, 0]],
+    [[1, 1, 1], [1, 0, 0]],
+    [[1, 1, 1], [0, 0, 1]],
+    [[1, 1, 0], [0, 1, 1]],
+    [[0, 1, 1], [1, 1, 0]]
+];
+
+const COLORS = ['#00ffff', '#ffff00', '#800080', '#0000ff', '#ff7f00', '#00ff00', '#ff0000'];
+
+let board = Array(ROWS).fill().map(() => Array(COLS).fill(0));
+let currentPiece = null;
+let nextPiece = null;
