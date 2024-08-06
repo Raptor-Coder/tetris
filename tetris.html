@@ -98,3 +98,51 @@ const COLORS = ['#00ffff', '#ffff00', '#800080', '#0000ff', '#ff7f00', '#00ff00'
 let board = Array(ROWS).fill().map(() => Array(COLS).fill(0));
 let currentPiece = null;
 let nextPiece = null;
+
+function createPiece() {
+    const shapeIndex = Math.floor(Math.random() * SHAPES.length);
+    const shape = SHAPES[shapeIndex];
+    const color = COLORS[shapeIndex];
+    return {
+        shape: shape,
+        color: color,
+        x: Math.floor(COLS / 2) - Math.floor(shape[0].length / 2),
+        y: 0
+    };
+}
+
+function drawBlock(ctx, x, y, color, size) {
+    ctx.fillStyle = color;
+    ctx.fillRect(x * size, y * size, size, size);
+    ctx.strokeStyle = '#000';
+    ctx.strokeRect(x * size, y * size, size, size);
+}
+
+function drawBoard() {
+    for (let y = 0; y < ROWS; y++) {
+        for (let x = 0; x < COLS; x++) {
+            if (board[y][x]) {
+                drawBlock(ctx, x, y, board[y][x], BLOCK_SIZE);
+            }
+        }
+    }
+}
+
+function drawPiece(piece, context, blockSize) {
+    piece.shape.forEach((row, y) => {
+        row.forEach((value, x) => {
+            if (value) {
+                drawBlock(context, piece.x + x, piece.y + y, piece.color, blockSize);
+            }
+        });
+    });
+}
+
+function drawNextPiece() {
+    nextPieceCtx.clearRect(0, 0, nextPieceCanvas.width, nextPieceCanvas.height);
+    const offsetX = (nextPieceCanvas.width / NEXT_BLOCK_SIZE - nextPiece.shape[0].length) / 2;
+    const offsetY = (nextPieceCanvas.height / NEXT_BLOCK_SIZE - nextPiece.shape.length) / 2;
+    nextPiece.x = offsetX;
+    nextPiece.y = offsetY;
+    drawPiece(nextPiece, nextPieceCtx, NEXT_BLOCK_SIZE);
+}
