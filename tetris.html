@@ -238,3 +238,45 @@ function startGame() {
     level = 1;
     scoreElement.textContent = score;
     levelElement.textContent = level;
+ currentPiece = createPiece();
+    nextPiece = createPiece();
+    drawNextPiece();
+    if (gameInterval) {
+        clearInterval(gameInterval);
+    }
+    gameInterval = setInterval(gameLoop, 1000);
+}
+
+document.addEventListener('keydown', event => {
+    switch(event.keyCode) {
+        case 37: // Left arrow
+            if (!collision({...currentPiece, x: currentPiece.x - 1})) {
+                currentPiece.x--;
+            }
+            break;
+        case 39: // Right arrow
+            if (!collision({...currentPiece, x: currentPiece.x + 1})) {
+                currentPiece.x++;
+            }
+            break;
+        case 40: // Down arrow
+            if (!collision({...currentPiece, y: currentPiece.y + 1})) {
+                currentPiece.y++;
+            }
+            break;
+        case 38: // Up arrow
+            rotate(currentPiece);
+            break;
+        case 32: // Space
+            while (!collision({...currentPiece, y: currentPiece.y + 1})) {
+                currentPiece.y++;
+            }
+            break;
+    }
+});
+
+restartBtn.addEventListener('click', startGame);
+
+startGame();
+</script>
+</body></html>
