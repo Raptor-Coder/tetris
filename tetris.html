@@ -146,3 +146,52 @@ function drawNextPiece() {
     nextPiece.y = offsetY;
     drawPiece(nextPiece, nextPieceCtx, NEXT_BLOCK_SIZE);
 }
+
+function collision(piece) {
+    for (let y = 0; y < piece.shape.length; y++) {
+        for (let x = 0; x < piece.shape[y].length; x++) {
+            if (piece.shape[y][x] &&
+                ((piece.y + y >= ROWS) ||
+                (piece.x + x < 0 || piece.x + x >= COLS) ||
+                (board[piece.y + y] && board[piece.y + y][piece.x + x]) !== 0)) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+function merge() {
+    currentPiece.shape.forEach((row, y) => {
+        row.forEach((value, x) => {
+            if (value) {
+                board[y + currentPiece.y][x + currentPiece.x] = currentPiece.color;
+            }
+        });
+    });
+}
+
+function rotate(piece) {
+    const rotated = piece.shape[0].map((_, index) =>
+        piece.shape.map(row => row[index]).reverse()
+    );
+    const prevShape = piece.shape;
+    piece.shape = rotated;
+    if (collision(piece)) {
+        piece.shape = prevShape;
+    }
+}
+
+function clearLines() {
+    let linesCleared = 0;
+    for (let y = ROWS - 1; y >= 0; y--) {
+        if (board[y].every(cell => cell !== 0)) {
+            board.splice(y, 1);
+            board.unshift(Array(COLS).fill(0));
+            linesCleared++;
+            y++;
+        }
+    }
+    if (linesCleared > 0) {
+        score += linesCleared * 100 * level;
+        scoreElement.textContent = score;
